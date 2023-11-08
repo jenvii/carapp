@@ -4,6 +4,8 @@ import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-material.css';
 import { Button } from "@mui/material";
 import { Snackbar } from "@mui/material";
+import AddCar from "./AddCar";
+import EditCar from "./EditCar";
 
 
 
@@ -33,6 +35,22 @@ export default function Carlist() {
         }
     }
 
+    const addCar = (car) => {
+        fetch('https://carrestapi.herokuapp.com/cars', {
+            method: 'POST',
+            headers: { 'Content-type': 'application/json' },
+            body: JSON.stringify(car)
+        })
+            .then(response => {
+                if (response.ok) {
+                    getCars();
+                } else {
+                    alert("Something went wrong");
+                }
+            })
+            .catch(err => console.error(err));
+    }
+
     //columns
     const columns = [
         { field: 'brand' },
@@ -46,7 +64,12 @@ export default function Carlist() {
                 <Button size="small" color="error" onClick={() => deleteCar(params)}>
                     Delete
                 </Button>
-        }
+        },
+        /* {
+            cellRenderer: params =>
+                <EditCar params={params} updateCar={updateCar} />
+                todo: editing the cars
+        } */
     ]
 
     useEffect(() => getCars(), []);
@@ -64,6 +87,7 @@ export default function Carlist() {
 
     return (
         <div>
+            <AddCar addCar={addCar} />
             <div className="ag-theme-material"
                 style={{ height: '700px', widt: '95%', margin: 'auto' }}>
                 <AgGridReact
